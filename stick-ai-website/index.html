@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stick.AI | Smart Mobility</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 2rem 0;
+        }
+        .card {
+            background: #fff;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .dashboard-placeholder {
+            background: #e2e8f0;
+            border: 2px dashed #94a3b8;
+            padding: 3rem;
+            text-align: center;
+            border-radius: 8px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Stick.AI</h1>
+        <p>Proactive Health Monitoring at the Edge</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Our Mission</h2>
+            <p>Stick.AI was built to provide safety, independence, and peace of mind for individuals who rely on walking aids. We are achieving this by embedding non-intrusive smart sensors directly into the handle of a standard walking stick.</p>
+            <p>Instead of requiring users to wear bulky medical alert devices, the stick itself continuously monitors their heart rate and analyzes their walking motion in real-time. If a fall is detected, or if vitals drop, the integrated AI recognizes the anomaly immediately.</p>
+        </div>
+
+        <div class="card">
+            <h2>Live Telemetry Dashboard</h2>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px; background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                    <canvas id="heartRateChart"></canvas>
+                </div>
+                <div style="flex: 1; min-width: 300px; background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                    <canvas id="motionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
