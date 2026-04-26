@@ -1,5 +1,27 @@
 // app.js
+const firebaseConfig = {
+  apiKey: "AIzaSyA3iSD2P6rrysE93uOD1i_o3QcGfGS_sjU",
+  authDomain: "stick-ai-system.firebaseapp.com",
+  databaseURL: "https://stick-ai-system-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "stick-ai-system",
+  storageBucket: "stick-ai-system.firebasestorage.app",
+  messagingSenderId: "174536136776",
+  appId: "1:174536136776:web:517dd123c2e3d443cae07d"
+};
 
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// 2. Listen for Live Data from the Arduino
+const telemetryRef = database.ref('stick_data');
+telemetryRef.on('value', (snapshot) => {
+    const liveData = snapshot.val();
+    
+    if (liveData) {
+        console.log("New data received from Arduino!", liveData);
+        // Later, we will write the code here to make the charts move!
+    }
+});
 // 1. Heart Rate Chart Setup
 const ctxHeart = document.getElementById('heartRateChart').getContext('2d');
 const heartRateChart = new Chart(ctxHeart, {
