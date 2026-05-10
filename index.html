@@ -36,14 +36,6 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        .dashboard-placeholder {
-            background: #e2e8f0;
-            border: 2px dashed #94a3b8;
-            padding: 3rem;
-            text-align: center;
-            border-radius: 8px;
-            color: #64748b;
-        }
     </style>
 </head>
 <body>
@@ -70,10 +62,96 @@
                 </div>
             </div>
         </div>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="app.js"></script>
+
+    <script type="module">
+        // Import Firebase modules via CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // Your exact Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3iSD2P6rrysE93uOD1i_o3QcGfGS_sjU",
+            authDomain: "stick-ai-system.firebaseapp.com",
+            databaseURL: "https://stick-ai-system-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "stick-ai-system",
+            storageBucket: "stick-ai-system.firebasestorage.app",
+            messagingSenderId: "174536136776",
+            appId: "1:174536136776:web:517dd123c2e3d443cae07d"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const sensorRef = ref(db, 'sensors');
+
+        // --- Chart.js Setup ---
+        const maxDataPoints = 20; // How many dots to show on the screen at once
+
+        // Heart Rate Chart
+        const ctxHR = document.getElementById('heartRateChart').getContext('2d');
+        const hrChart = new Chart(ctxHR, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Heart Rate (BPM)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    data: [],
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: { scales: { y: { min: 40, max: 180 } }, animation: false } // Disabled animation for real-time snap
+        });
+
+        // Motion Chart
+        const ctxMotion = document.getElementById('motionChart').getContext('2d');
+        const motionChart = new Chart(ctxMotion, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'Accel X', borderColor: 'red', data: [], tension: 0.4 },
+                    { label: 'Accel Y', borderColor: 'green', data: [], tension: 0.4 },
+                    { label: 'Accel Z', borderColor: 'blue', data: [], tension: 0.4 }
+                ]
+            },
+            options: { scales: { y: { suggestedMin: -20, suggestedMax: 20 } }, animation: false }
+        });
+
+        // --- Firebase Real-time Listener ---
+        onValue(sensorRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const now = new Date().toLocaleTimeString();
+
+                // 1. Update Heart Rate Chart
+                hrChart.data.labels.push(now);
+                hrChart.data.datasets[0].data.push(data.heartRate !== undefined ? data.heartRate : 0);
+                
+                if (hrChart.data.labels.length > maxDataPoints) {
+                    hrChart.data.labels.shift();
+                    hrChart.data.datasets[0].data.shift();
+                }
+                hrChart.update();
+
+                // 2. Update Motion Chart
+                motionChart.data.labels.push(now);
+                motionChart.data.datasets[0].data.push(data.accelX !== undefined ? data.accelX : 0);
+                motionChart.data.datasets[1].data.push(data.accelY !== undefined ? data.accelY : 0);
+                motionChart.data.datasets[2].data.push(data.accelZ !== undefined ? data.accelZ : 0);
+                
+                if (motionChart.data.labels.length > maxDataPoints) {
+                    motionChart.data.labels.shift();
+                    motionChart.data.datasets.forEach(dataset => dataset.data.shift());
+                }
+                motionChart.update();
+            }
+        });
+    </script>
 </body>
 </html>
