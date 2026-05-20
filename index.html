@@ -36,6 +36,43 @@
             margin: auto;
             padding: 3rem 0;
         }
+
+        /* --- NEW AI STATUS BADGE STYLES --- */
+        .status-container {
+            background-color: #1e293b;
+            border: 2px solid #38bdf8;
+            border-radius: 10px;
+            padding: 15px 25px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .status-container h2 {
+            margin: 0;
+            font-weight: 500;
+            color: #f8fafc;
+        }
+
+        #ai-status {
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+        
+        .status-safe { color: #22c55e; } /* Green */
+        .status-warning { color: #f59e0b; } /* Yellow */
+        .status-danger { 
+            color: #ef4444; /* Red */
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        /* ---------------------------------- */
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -72,15 +109,18 @@
     </header>
 
     <div class="container">
+        
+        <div class="status-container">
+            <h2>Live AI Status: <span id="ai-status">Connecting...</span></h2>
+        </div>
+
         <div class="grid">
-            <!-- Vitals Dashboard -->
             <div class="card">
                 <h2>Pulse Oximetry</h2>
                 <div class="data-readout" id="big-bpm">-- BPM</div>
                 <canvas id="heartRateChart" height="200"></canvas>
             </div>
 
-            <!-- IMU Dashboard -->
             <div class="card">
                 <h2>AI Fall Analytics (IMU)</h2>
                 <canvas id="motionChart" height="270"></canvas>
@@ -88,7 +128,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -113,7 +152,7 @@
         Chart.defaults.borderColor = '#334155';
 
         const maxDataPoints = 15;
-        let lastKnownBPM = null; // Memory to prevent the line from dropping to zero
+        let lastKnownBPM = null; 
 
         // 1. Setup Heart Rate Chart
         const hrChart = new Chart(document.getElementById('heartRateChart').getContext('2d'), {
@@ -142,14 +181,32 @@
             if (data) {
                 const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
 
-                // Logic: Only update the chart if we have a real human BPM
+                // --- NEW AI STATUS LOGIC ---
+                if (data.status) {
+                    const statusElement = document.getElementById("ai-status");
+                    statusElement.innerText = data.status;
+
+                    // Dynamically change colors based on the text
+                    if (data.status.includes("Walking")) {
+                        statusElement.className = "status-safe";
+                    } else if (data.status.includes("Drop")) {
+                        statusElement.className = "status-warning";
+                    } else if (data.status.includes("FALL")) {
+                        statusElement.className = "status-danger";
+                    } else {
+                        statusElement.className = "";
+                    }
+                }
+                // ---------------------------
+
+                // Heart Rate Logic
                 if (data.heartRate !== undefined && data.heartRate > 40) {
                     lastKnownBPM = data.heartRate;
                     document.getElementById('big-bpm').innerText = `${lastKnownBPM} BPM`;
                 }
                 
                 hrChart.data.labels.push(now);
-                hrChart.data.datasets[0].data.push(lastKnownBPM); // Prevents the chart from crashing to 40
+                hrChart.data.datasets[0].data.push(lastKnownBPM);
                 
                 if (hrChart.data.labels.length > maxDataPoints) {
                     hrChart.data.labels.shift();
