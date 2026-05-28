@@ -1,4 +1,4 @@
-print("🚀 Initiating Final Board Architecture...")
+print("🚀 Initiating Final Board Architecture (Local File Mode)...")
 import sys
 import subprocess
 import os
@@ -6,7 +6,7 @@ import threading
 import time
 
 # ==============================================================================
-# 1. ENVIRONMENT OVERRIDE
+# 1. ENVIRONMENT SETUP
 # ==============================================================================
 def setup_environment():
     try:
@@ -14,42 +14,32 @@ def setup_environment():
     except Exception:
         pass
 
-    import requests 
-
-    print("🗑️ Clearing wrong architecture cache...")
-    if os.path.exists("model.eim"):
-        os.remove("model.eim")
-        print("✅ Old file purged.")
-
-    # YOUR PERFECT AARCH64 URL:
-    MODEL_URL = "https://raw.githubusercontent.com/Muhammad-Jamil-Al-Mutairi/stick-ai-website/main/stick-ai-fall-detection-linux-aarch64-v12-impulse-%231.eim"
+    # Force Python to look in the exact folder where this script is running
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(script_dir, "model.eim")
     
-    print("🌐 Downloading UNO Q AI Brain...")
-    try:
-        response = requests.get(MODEL_URL)
-        if response.status_code == 200 and not response.text.strip().startswith("<!DOCTYPE html>"):
-            with open("model.eim", "wb") as f:
-                f.write(response.content)
-            print("✅ Binary model downloaded!")
-        else:
-            print("❌ Failed: GitHub returned a webpage. Check the URL!")
-            return False
-    except Exception as e:
-        print(f"❌ Failed to download model: {e}")
-        return False
+    if not os.path.exists(model_path):
+        print(f"❌ Error: Could not find model.eim at {model_path}")
+        return False, None
         
-    print("🔓 Unlocking Linux execution permissions...")
+    print(f"🔓 Unlocking Linux execution permissions...")
     try:
-        os.chmod("model.eim", 0o777)
+        os.chmod(model_path, 0o777)
         print("✅ Permissions granted!")
     except Exception as e:
         print(f"❌ Failed to unlock permissions: {e}")
-        return False
+        return False, None
         
-    return True
+    return True, model_path
 
-if not setup_environment():
+success, local_model_name = setup_environment()
+if not success:
     sys.exit()
+
+# ==============================================================================
+# 2. EDGE IMPULSE AI LOGIC
+# ==============================================================================
+# ... (Keep the rest of your AI Logic exactly the same!) ...
 
 # ==============================================================================
 # 2. EDGE IMPULSE AI LOGIC
@@ -60,7 +50,6 @@ import requests
 
 FIREBASE_URL = "https://stick-ai-system-default-rtdb.europe-west1.firebasedatabase.app/sensors.json"
 
-# --- UPDATE 1: Added the status field to the memory state ---
 current_state = { 
     "accelX": 0.0, 
     "accelY": 0.0, 
@@ -69,8 +58,8 @@ current_state = {
     "status": "Initializing..." 
 }
 
-# The Absolute Path Fix 
-model_path = os.path.abspath("model.eim")
+# The Absolute Path Fix for the uploaded file
+model_path = os.path.abspath(local_model_name)
 print(f"🔍 Pointing AI Runner to absolute path: {model_path}")
 
 try:
@@ -97,7 +86,6 @@ def on_movement(x, y, z):
         
         print("\n--- Live AI Telemetry ---", flush=True)
         
-        # --- UPDATE 2: Logic to determine the highest prediction ---
         highest_score = 0
         current_prediction = "Walking"
         
@@ -109,7 +97,6 @@ def on_movement(x, y, z):
                 highest_score = score
                 current_prediction = label
                 
-        # --- UPDATE 3: Push the winning status to Firebase ---
         if current_prediction == "Fall" and highest_score > 0.80:
             current_state["status"] = "🚨 FALL DETECTED 🚨"
             print("🚨🚨 CRITICAL EMERGENCY DETECTED: FALL 🚨🚨", flush=True)
@@ -118,7 +105,6 @@ def on_movement(x, y, z):
         else:
             current_state["status"] = "✅ Walking Safely"
 
-        # Slide the window
         sensor_buffer = sensor_buffer[84:]
 
 def firebase_worker():
