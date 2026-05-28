@@ -1,6 +1,9 @@
 # Stick.AI: Predictive Mobility & Fall Detection System 🦯🧠
 
-![AI Stick Live Demo](project_photos/stick_demo.gif) *(Note: Change `stick_demo.gif` to the exact name of your uploaded GIF!)*
+
+
+
+
 
 [![Live Dashboard](https://img.shields.io/badge/Live_Dashboard-Online-success?style=for-the-badge)](https://muhammad-jamil-al-mutairi.github.io/stick-ai-website/)
 [![Hardware](https://img.shields.io/badge/Hardware-Arduino_UNO_Q-00979D?style=for-the-badge&logo=arduino)](https://store.arduino.cc)
