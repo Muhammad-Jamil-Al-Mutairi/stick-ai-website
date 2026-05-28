@@ -1,0 +1,27 @@
+profiles:
+  default:
+    fqbn: 
+    platforms:
+      - platform: arduino:zephyr
+    libraries:
+      - ArxContainer (0.7.0)
+      - ArxTypeTraits (0.3.2)
+      - DebugLog (0.8.4)
+      - MsgPack (0.4.2)
+      - dependency: ArduinoGraphics (1.1.5)
+      - Arduino_HS300x (1.0.0)
+      - Arduino_LPS22HB (1.0.2)
+      - Arduino_LSM6DSOX (1.1.2)
+      - dependency: Arduino_LTR381RGB (1.0.1)
+      - Arduino_Modulino (0.8.0)
+      - STM32duino VL53L4CD (1.0.5)
+      - STM32duino VL53L4ED (1.0.1)
+      - SparkFun MAX3010x Pulse and Proximity Sensor Library (1.1.2)
+      - dependency: Adafruit BusIO (1.17.4)
+      - dependency: Adafruit GFX Library (1.12.6)
+      - Adafruit MPU6050 (2.2.9)
+      - dependency: Adafruit SSD1306 (2.5.16)
+      - dependency: Adafruit Unified Sensor (1.1.15)
+      - ArduinoJson (7.4.3)
+
+default_profile: default
