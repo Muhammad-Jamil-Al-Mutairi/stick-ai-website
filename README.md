@@ -1,3 +1,9 @@
+
+
+https://github.com/user-attachments/assets/800cbe44-ae8a-4ce1-a476-aba6ecbe14d0
+
+
+
 # Stick.AI: Predictive Mobility & Fall Detection System 🦯🧠
 
 
