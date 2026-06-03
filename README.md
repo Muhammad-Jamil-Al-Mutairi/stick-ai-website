@@ -49,7 +49,7 @@ This project operates across three major engineering domains:
 
 The electrical system requires precise I2C communication between the sensors and the microcontroller. 
 
-![Stick.AI Circuit Schematic](<img width="890" height="685" alt="image" src="https://github.com/user-attachments/assets/3bb57f66-29fa-4907-8e2e-4bdf7c343d72" />
+<img width="890" height="685" alt="image" src="https://github.com/user-attachments/assets/3bb57f66-29fa-4907-8e2e-4bdf7c343d72" />
 )
 
 **Core Components:**
